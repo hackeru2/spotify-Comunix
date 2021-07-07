@@ -3,8 +3,9 @@
     <a-col :sm="{span: 24 ,  order:2}"   :md="{span: 12 , order:1 }"  >  
       <FetchInput type="track"/>
     </a-col>
+    {{type}}
     <a-col  :sm="{span: 24, order:1}"  :md="{span: 12 , order:2}" >  
-      <a-radio-group default-value="track" button-style="solid" size="large">
+      <a-radio-group default-value="track" button-style="solid" size="large" @change="({target}) => type=target.value">
         <a-radio-button value="artist">
           Artist
         </a-radio-button>
@@ -20,7 +21,11 @@
 import FetchInput from "./FetchInput.vue"
 export default {
   components: { FetchInput },
-
+data() {
+  return {
+    type : "track"
+  }
+},
 }
 </script>
 

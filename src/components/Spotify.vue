@@ -7,10 +7,10 @@
     </template>
      
       <!-- <iframe :src="`https://embed.spotify.com/?uri=spotify:user:sharemyplaylists.com:playlist:${playlist_id}&amp;theme=white`" frameborder="0" allowtransparency="true" style="width:340px; height:400px; margin-top:5px; margin-left:15px; margin-bottom:21px;"></iframe> -->
- <iframe src="https://open.spotify.com/embed/track/7B1Dl3tXqySkB8OPEwVvSu?si=5d9d0259d2a24551" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-    <a-card-meta title="Europe Street beat" style="margin-bottom:10px">
-      <template #description>www.instagram.com</template>
-    </a-card-meta>
+ 
+    <!-- <a-card-meta title="Europe Street beat" style="margin-bottom:10px"> -->
+      <!-- <template #description>www.instagram.com</template> -->
+    <!-- </a-card-meta> -->
     <MyForm :playlist_id="playlist_id" />
   </a-card>
     </a-col>

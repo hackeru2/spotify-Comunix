@@ -14,19 +14,13 @@
     >
       <template #dataSource>
         <a-select-option v-for="item in dataSource" :key="item.count" :title="item.name">
-        <a-avatar :src="item.avatar" />
-        <a-divider type="vertical" />
-          <!-- {{ item.query }}   -->
-            <a
-            rel="noopener noreferrer"
-          >
-           
-            {{ item.name }}
-          </a>
-           <a-divider type="vertical" />
-            {{ item.release }}
-          <!-- <span class="global-search-item-count">{{ item.count }} results</span> -->
-          
+          <a-avatar :src="item.avatar" />
+          <a-divider type="vertical" />
+          <a  rel="noopener noreferrer" >{{ item.name }}</a>
+          <a-divider type="vertical" />
+          {{item.artist}}
+          <a-divider type="vertical"  />
+          {{ item.release }}
         </a-select-option>
       </template>
       <a-input-search size="large" placeholder="input here" enterButton></a-input-search>
@@ -43,21 +37,21 @@ const url = "https://api.spotify.com/v1/search?response_type=code&client_id=6db7
 
 export default defineComponent({
    props: {
-    type: String,
-    playlist_id: String
+    // type: String,
+    // playlist_id: String
   },
   setup(props, { emit }) {
     const value = ref('')
     const access_token = ref('')
     const dataSource = ref([])
     
-    const getTracksApi = (q, token) => fetch(url + 'q='+q+"&type="+props.type, { headers:setHeaders(token)});
+    const getTracksApi = (q, token) => fetch(url + 'q='+q+"&type=track", { headers:setHeaders(token)});
      
     const onSelect = (v , option) => {
       console.log('onSelect', v, {option});
       value.value = option.title
       console.log(dataSource.value[v].id  )
-      emit('selected' , dataSource.value[v].id )
+      emit('selected' , dataSource.value[v]  )
     };
   
   const getTracks =  async q =>  refreshAndTryAgain(q)  
@@ -101,6 +95,7 @@ export default defineComponent({
       id:item.id,
       name: item.name,  
       count: idx ,
+      artist : item.artists[0].name,
       release : item.album.release_date
     }));
    }
@@ -135,12 +130,14 @@ return {
 </script>
 <style>
 .global-search-wrapper {
-  padding-right: 50px;
+  
   display: inline-block;
+    
 }
 
 .global-search {
   width: 100%;
+ 
 }
 
 .global-search.ant-select-auto-complete .ant-select-selection--single {

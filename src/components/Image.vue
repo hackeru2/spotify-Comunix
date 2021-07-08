@@ -1,12 +1,12 @@
 <template>
-  <div>
+ 
        <a-image 
-       height="200px"
-       width="500px"
+    
+    
       src="https://impersonatorsmusic.com/wp-content/uploads/2019/01/listen-on-spotify-logo.png"
     />
   
-  </div>
+  
 </template>
 
 <script>

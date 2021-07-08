@@ -37,21 +37,27 @@
 import {  defineComponent, ref,   } from 'vue';
 import { message } from 'ant-design-vue';
 import {setHeaders, refreshToken} from '../utils'
+
 const url = "https://api.spotify.com/v1/search?response_type=code&client_id=6db74b4cae9e416f91bfc2072854a31d&limit=5&"
+ 
+
 export default defineComponent({
    props: {
-    type: String
+    type: String,
+    playlist_id: String
   },
-  setup(props) {
-    const value = ref('qe1234')
+  setup(props, { emit }) {
+    const value = ref('')
     const access_token = ref('')
     const dataSource = ref([])
+    
     const getTracksApi = (q, token) => fetch(url + 'q='+q+"&type="+props.type, { headers:setHeaders(token)});
      
     const onSelect = (v , option) => {
       console.log('onSelect', v, {option});
-      // console.log('value', value.value = value.value.replace(/[^a-z0-9]/gi,''));
-
+      value.value = option.title
+      console.log(dataSource.value[v].id  )
+      emit('selected' , dataSource.value[v].id )
     };
   
   const getTracks =  async q =>  refreshAndTryAgain(q)  
@@ -84,12 +90,15 @@ export default defineComponent({
   const  searchResult = async  (query) => {
   
   let response = await  getTracks(query)
-  let {tracks} = await response.json()
+  let {tracks , artists} = await response.json()
+  const {items} =  tracks ? tracks : artists ;
+  console.log(items)
   if(!tracks) return ;
-  dataSource.value = tracks.items
+  dataSource.value = items
     .map((item, idx) => ({ 
       avatar :item.album.images[2].url, 
       query,
+      id:item.id,
       name: item.name,  
       count: idx ,
       release : item.album.release_date
@@ -160,4 +169,12 @@ return {
 .global-search-item-count {
   flex: none;
 }
+/* .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+.ant-btn-primary {
+  background: #1ed760 !important;
+  border-color: #1ed760 !important;
+}
+.ant-btn-primary:hover {
+  background: #6fe999 !important;
+} */
 </style>

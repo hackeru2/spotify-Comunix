@@ -1,7 +1,9 @@
 <template>
   <div>
        <a-image 
-      src="https://www.tgspot.co.il/wp-content/uploads/2018/04/Spotify-Logo.png"
+       height="200px"
+       width="500px"
+      src="https://impersonatorsmusic.com/wp-content/uploads/2019/01/listen-on-spotify-logo.png"
     />
   
   </div>

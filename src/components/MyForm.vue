@@ -1,7 +1,7 @@
 <template>
   <a-row :gutter="[0,24]" class="align-initial">
     <a-col :sm="{span: 24 ,  order:2}"   :md="{span: 15 , order:1 }"  >  
-      <FetchInput type="track"/>
+      <FetchInput :type="type" :playlist_id="playlist_id" @selected="selected"   />
     </a-col>
      
     <a-col  :sm="{span: 24, order:1}"  :md="{span: 7 , order:2}" >  
@@ -20,7 +20,11 @@
 <script>
 import FetchInput from "./FetchInput.vue"
 export default {
+  props:['playlist_id'],
   components: { FetchInput },
+  methods: {
+    selected(id){ alert(id)}
+  },
 data() {
   return {
     type : "track"

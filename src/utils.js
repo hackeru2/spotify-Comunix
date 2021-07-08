@@ -4,7 +4,12 @@ export const setHeaders =  access_token  =>  new Headers({
    'Authorization': 'Bearer '+access_token , 
   'Content-Type': 'application/json'
 })
-
+ 
+export const setHeadersPost =  access_token  =>  new Headers({
+"Method" : "POST",
+  'Authorization': 'Bearer '+access_token , 
+  'Content-Type': 'application/json'
+})
 export  const refreshToken =async () => {
   const fields = "grant_type=refresh_token&refresh_token=AQBGqVQXfvOrheZoXqpHoh2ZOQ6yrT_VXy36hGEzrzqyLWcAdBmT21UEjB9xa1HwySyaKxns0w1qFl_qTJG5kjWuvLYRqDdxvlimRNWq-1IzDySl72q445MxYBqDSQ1uBII&client_id=78ddd16c16e43884672d93a4a299bd0a59878fc3";
 const urlRefresh = "https://accounts.spotify.com/api/token?"+fields;

@@ -1,27 +1,32 @@
 <template>
-  <div class="global-search-wrapper" style="width: 100%">
+  <div class="global-search-wrapper" style="width: 100%"> 
+    <!-- @search="handleSearch" -->
     <a-auto-complete
       v-model:value="value"
       class="global-search"
       size="large"
+      ref="what"
       style="width: 100%"
       option-label-prop="title"
       @select="onSelect"
-      @search="handleSearch"
+      
+      @input="handleSearch"
     >
       <template #dataSource>
-        <a-select-option v-for="item in dataSource" :key="item.category" :title="item.category">
-          Found {{ item.query }} on
+        <a-select-option v-for="item in dataSource" :key="item.count" :title="item.name">
+        <a-avatar :src="item.avatar" />
+        <a-divider type="vertical" />
+          <!-- {{ item.query }}   -->
             <a
-            :href="`https://s.taobao.com/search?q=${item.query}`"
-            target="_blank"
             rel="noopener noreferrer"
           >
-            {{ item.category }}
-          </a>
            
+            {{ item.name }}
+          </a>
+           <a-divider type="vertical" />
+            {{ item.release }}
+          <!-- <span class="global-search-item-count">{{ item.count }} results</span> -->
           
-          <span class="global-search-item-count">{{ item.count }} results</span>
         </a-select-option>
       </template>
       <a-input-search size="large" placeholder="input here" enterButton></a-input-search>
@@ -29,7 +34,8 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+import {  defineComponent, ref,   } from 'vue';
+import { message } from 'ant-design-vue';
 import {setHeaders, refreshToken} from '../utils'
 const url = "https://api.spotify.com/v1/search?response_type=code&client_id=6db74b4cae9e416f91bfc2072854a31d&limit=5&"
 export default defineComponent({
@@ -37,83 +43,85 @@ export default defineComponent({
     type: String
   },
   setup(props) {
-
+    const value = ref('qe1234')
+    const access_token = ref('')
+    const dataSource = ref([])
     const getTracksApi = (q, token) => fetch(url + 'q='+q+"&type="+props.type, { headers:setHeaders(token)});
-    
-    
-   
-    
-    
+     
+    const onSelect = (v , option) => {
+      console.log('onSelect', v, {option});
+      // console.log('value', value.value = value.value.replace(/[^a-z0-9]/gi,''));
 
-    const value = ref('');
-    const dataSource = ref([]);
-
-    const onSelect = value => {
-      console.log('onSelect', value);
     };
+  
+  const getTracks =  async q =>  refreshAndTryAgain(q)  
 
-    // const getRandomInt = (max, min = 0) => {
-    //   return Math.floor(Math.random() * (max - min + 1)) + min;
-    // };
+  const  refreshAndTryAgain = async (q  ) => {
 
-    
+       if(!access_token.value) access_token.value = await refreshToken()
+      let gtapi = await getTracksApi ( q , access_token.value)
+      if ( gtapi.status == 401)  {
+        access_token.value = await refreshToken()
+        gtapi = await getTracksApi ( q , access_token.value)
+      }
+      return gtapi 
+    }
 
- 
+  const handleSearch =   ({target}) => {
+           
+         target.value = target.value.replace(/[^a-z0-9\s-_&]/gi,'');
+        
 
-    return {
+         if(target.value != value.value) {
+          value.value  = target.value
+
+          return  message.warning('A search field - should accept Unicode characters');
+          }
+        //  console.log(`value.value`, value.value , val)
+        searchResult(target.value) 
+         ;}
+         
+  const  searchResult = async  (query) => {
+  
+  let response = await  getTracks(query)
+  let {tracks} = await response.json()
+  if(!tracks) return ;
+  dataSource.value = tracks.items
+    .map((item, idx) => ({ 
+      avatar :item.album.images[2].url, 
+      query,
+      name: item.name,  
+      count: idx ,
+      release : item.album.release_date
+    }));
+   }
+
+return {
       value,
-      dataSource,
+      // handleChange,
+      handleSearch,
       onSelect,
       getTracksApi,
-     
+      dataSource ,
+     searchResult,
       refreshToken,
     };
   },
   data() {
     return {
-      access_token : ''
+      access_token : '',
+      // dataSource : [],
     }
   },
+ methods: {
+ 
+ },  
   async created () {
-    // let w =    await  this.getTracksApi()
    this.access_token = await  this.refreshToken()
-   this.access_token+="234"
+    // console.log(this.$refs.what.$el.childNodes[3].childNodes[1].childNodes)
+// console.log(document.querySelector(".ant-input-search").childNodes[0].childNodes[1].value = 'dfgdfg');
   },
-  methods : {
-
-  handleSearch (val) {
-      this.dataSource.value = val ? this.searchResult(val) : [];
-  },
-   async getTracks  (q) {
-       this.refreshAndTryAgain(q, this.access_token)  
-      
-  },
-  async searchResult  (query) {
-  
-  let response = await  this.getTracks(query)
-
-  let  {tracks} = await response.json()
-  
-  let _return = tracks.items
-    .map((item, idx) => ({ //, idx
-      query,
-      category: item.name, // `${query}${idx}`,
-      count: idx ,
-    }));
-    console.log(`_return`, _return)
-    return _return
-},
-  async refreshAndTryAgain (q , token)  {
-      // let token = await refreshToken()
-      console.log(`token`, token)
-      let gtapi = await this.getTracksApi ( q , token)
-      if ( gtapi.status == 401)  {
-        this.access_token = await refreshToken()
-        gtapi = await this.getTracksApi ( q , this.access_token)
-      }
-      return gtapi 
-    }
-  }
+ 
 });
 </script>
 <style>

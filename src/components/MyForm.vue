@@ -1,10 +1,10 @@
 <template>
   <a-row :gutter="[0,24]" class="align-initial">
-    <a-col :sm="{span: 24 ,  order:2}"   :md="{span: 12 , order:1 }"  >  
+    <a-col :sm="{span: 24 ,  order:2}"   :md="{span: 15 , order:1 }"  >  
       <FetchInput type="track"/>
     </a-col>
-    {{type}}
-    <a-col  :sm="{span: 24, order:1}"  :md="{span: 12 , order:2}" >  
+     
+    <a-col  :sm="{span: 24, order:1}"  :md="{span: 7 , order:2}" >  
       <a-radio-group default-value="track" button-style="solid" size="large" @change="({target}) => type=target.value">
         <a-radio-button value="artist">
           Artist
